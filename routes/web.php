@@ -1,19 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+Route::redirect('/', '/tasks');
 
-Route::redirect('/', '/register');
+Route::get('/tasks', [TaskController::class, 'index']);
+Route::post('/tasks/store', [TaskController::class, 'store']);
+Route::post('/tasks/delete/{id}', [TaskController::class, 'destroy']);
+Route::get('/tasks/edit/{id}', [TaskController::class, 'edit']);
+Route::post('/tasks/update', [TaskController::class, 'update']);
 
-Route::get('/register', [RegisterController::class, 'index']);
-
-Route::post('/register', [RegisterController::class, 'store']);
-
-// المتغير {id} يستقبل رقم المستخدم ويوجّه الطلب فوراً لدالة destroy
-Route::post('/user/delete/{id}', [RegisterController::class, 'destroy']);
-
-// مسار لجلب بيانات المستخدم للتعديل
-Route::get('/user/edit/{id}', [RegisterController::class, 'edit']);
-
-// مسار لاستقبال البيانات المحدثة والحفظ في قاعدة البيانات
-Route::post('/user/update', [RegisterController::class, 'update']);
+Route::get('/users', [UserController::class, 'index']);
+Route::post('/users/store', [UserController::class, 'store']);
+Route::get('/users/edit/{id}', [UserController::class, 'edit']);
+Route::post('/users/update', [UserController::class, 'update']);
+Route::post('/users/delete/{id}', [UserController::class, 'delete']);
