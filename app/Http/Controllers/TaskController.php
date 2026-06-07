@@ -3,50 +3,73 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+//  استدعاء model
+use App\Models\Task;
+
 class TaskController extends Controller
 {
+
+     // استعراض المهام بالـ ORM
+
     public function index()
     {
-        $tasks = DB::table('tasks')->get();
+        // جلب جميع المهام باستخدام model Task
+        $tasks = Task::all();
         return view('tasks', compact('tasks'));
     }
 
 
+     // حفظ مهمة  مع الفاليديشن
+
     public function store(Request $request)
     {
-        $taskName = $request->input('task_name');
-
-        DB::table('tasks')->insert([
-            'name' => $taskName,
-            'created_at' => now(),
-            'updated_at' => now()
+        $request->validate([
+            'task_name' => 'required|max:255'
         ]);
 
-        return redirect()->back();
+        // الحفظ عبر الـ Eloquent ORM
+        $task = new Task();
+        $task->name = $request->task_name;
+        $task->save();
+
+        return redirect('/tasks');
     }
 
 
-    public function destroy($id)
-    {
-        DB::table('tasks')->where('id', $id)->delete();
-        return redirect()->back();
-    }
-
+     // جلب بيانات المهمة للتعديل بالـ ORM
 
     public function edit($id)
     {
-        $singleTask = DB::table('tasks')->where('id', $id)->first();
-        $tasks = DB::table('tasks')->get();
+        $singleTask = Task::find($id);
+        $tasks = Task::all();
         return view('tasks', compact('singleTask', 'tasks'));
     }
 
+
+     // تحديث المهمة بالـ ORM والتحقق
+
     public function update(Request $request)
     {
-        DB::table('tasks')->where('id', $request->id)->update([
-            'name' => $request->task_name,
-            'updated_at' => now()
+        $request->validate([
+            'task_name' => 'required|max:255'
         ]);
+
+        // جلب المهمة وتعديلها
+        $task = Task::find($request->id);
+        $task->name = $request->task_name;
+        $task->save();
+
+        return redirect('/tasks');
+    }
+
+
+     // حذف المهمة بالـ ORM
+
+    public function delete($id)
+    {
+        $task = Task::find($id);
+        $task->delete();
+
         return redirect('/tasks');
     }
 }

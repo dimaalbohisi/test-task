@@ -129,6 +129,16 @@
         .cancel-link:hover {
             text-decoration: underline;
         }
+
+        /* تنسيق رسائل الخطأ باللون الأحمر المتناسق */
+        .error-message {
+            display: block;
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
     </style>
 
     <div class="container-fluid">
@@ -142,12 +152,21 @@
 
                     <label>User Name:</label>
                     <input type="text" name="name" value="{{ $singleUser->name }}" required>
+                    @error('name')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
 
                     <label>Email Address:</label>
                     <input type="email" name="email" value="{{ $singleUser->email }}" required>
+                    @error('email')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
 
                     <label>Password (Leave blank to keep current):</label>
                     <input type="password" name="password" placeholder="Enter new password if you want to change it...">
+                    @error('password')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
 
                     <button type="submit" class="btn-block-user btn-update">Update User</button>
                     <a href="/users" class="cancel-link">Cancel Edit</a>
@@ -159,12 +178,21 @@
 
                     <label>User Name:</label>
                     <input type="text" name="name" placeholder="Enter full name..." required>
+                    @error('name')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
 
                     <label>Email Address:</label>
                     <input type="email" name="email" placeholder="Enter email address..." required>
+                    @error('email')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
 
                     <label>Password:</label>
                     <input type="password" name="password" placeholder="Create password..." required>
+                    @error('password')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
 
                     <button type="submit" class="btn-block-user btn-add">Add User</button>
                 </form>

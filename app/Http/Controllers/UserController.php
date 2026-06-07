@@ -3,73 +3,86 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+//  استدعاء الموديل الخاص بالمستخدمين
+use App\Models\User;
 
 class UserController extends Controller
 {
-    //  استعراض المستخدمين
+
+     // استعراض المستخدمين باستخدام Eloquent ORM
+
     public function index()
     {
-        $users = DB::table('users')->get();
+        // استخدام User::all()
+        $users = User::all();
         return view('users', compact('users'));
     }
 
-    //  حفظ مستخدم جديد
+
+     // حفظ مستخدم جديد مع الفاليديشن  ORM
+
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email', // منع تكرار الإيميل في قاعدة البيانات
             'password' => 'required'
         ]);
 
-        DB::table('users')->insert([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
+        //  الحفظ باستخدام الـ Eloquent ORM
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password); // تشفير كلمة المرور للحماية
+        $user->save();
         return redirect('/users');
     }
 
-    //  جلب بيانات للتعديل
+
+     // جلب بيانات مستخدم محدد للتعديل باستخدام الـ ORM
+
     public function edit($id)
     {
-        $singleUser = DB::table('users')->where('id', $id)->first();
-        $users = DB::table('users')->get();
+        //    find() و User::all()
+        $singleUser = User::find($id);
+        $users = User::all();
         return view('users', compact('singleUser', 'users'));
     }
 
-    //تحديث
+
+     // تحديث  ORM
+
     public function update(Request $request)
     {
+        // تطبيق الفاليديشن
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|max:255',
             'email' => 'required|email'
         ]);
 
-        $updateData = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'updated_at' => now()
-        ];
+        $user = User::find($request->id);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
 
         if ($request->filled('password')) {
-            $updateData['password'] = Hash::make($request->password);
+            $user->password = Hash::make($request->password);
         }
 
-        DB::table('users')->where('id', $request->id)->update($updateData);
+        $user->save(); //حفظ   تلقائي
 
         return redirect('/users');
     }
 
-    //  حذف
+
+     // حذف مستخدم باستخدام الـ ORM
+
     public function delete($id)
     {
-        DB::table('users')->where('id', $id)->delete();
+        $user = User::find($id);
+        $user->delete();
+
         return redirect('/users');
     }
 }

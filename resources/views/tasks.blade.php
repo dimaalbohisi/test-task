@@ -129,6 +129,16 @@
         .cancel-link:hover {
             text-decoration: underline;
         }
+
+        /* تنسيق مخصص لرسالة الخطأ    */
+        .error-message {
+            display: block;
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
     </style>
 
     <div class="container-fluid">
@@ -141,6 +151,12 @@
                     <input type="hidden" name="id" value="{{ $singleTask->id }}">
                     <label>Task Name:</label>
                     <input type="text" name="task_name" value="{{ $singleTask->name }}" required>
+
+                    {{--  إظهار خطأ التعديل   --}}
+                    @error('task_name')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+
                     <button type="submit" class="btn-block-task btn-update">Update Task</button>
                     <a href="/tasks" class="cancel-link">Cancel Edit</a>
                 </form>
@@ -150,6 +166,12 @@
                     @csrf
                     <label>Task Name:</label>
                     <input type="text" name="task_name" placeholder="Enter task name..." required>
+
+                    {{--  إظهار خطأ الإضافة   --}}
+                    @error('task_name')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+
                     <button type="submit" class="btn-block-task btn-add">Add Task</button>
                 </form>
             @endif
